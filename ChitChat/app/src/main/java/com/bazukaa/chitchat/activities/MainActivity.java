@@ -1,8 +1,10 @@
-package com.bazukaa.chitchat;
+package com.bazukaa.chitchat.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+
+import com.bazukaa.chitchat.R;
 
 public class MainActivity extends AppCompatActivity {
 

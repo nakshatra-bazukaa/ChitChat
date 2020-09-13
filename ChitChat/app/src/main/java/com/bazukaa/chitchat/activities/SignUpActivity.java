@@ -1,10 +1,12 @@
-package com.bazukaa.chitchat;
+package com.bazukaa.chitchat.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.bazukaa.chitchat.R;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -25,6 +27,7 @@ public class SignUpActivity extends AppCompatActivity {
         setContentView(R.layout.activity_sign_up);
         ButterKnife.bind(this);
     }
+    // To go to sign in activity
     @OnClick(R.id.act_sigup_tv_signin)
     public void onSigninClicked(){
         onBackPressed();
