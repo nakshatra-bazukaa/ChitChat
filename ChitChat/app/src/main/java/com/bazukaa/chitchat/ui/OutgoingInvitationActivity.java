@@ -46,6 +46,7 @@ public class OutgoingInvitationActivity extends AppCompatActivity {
 
     private PreferenceManager preferenceManager;
     private String inviterToken;
+    private User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,7 +66,7 @@ public class OutgoingInvitationActivity extends AppCompatActivity {
             imgMeetingType.setImageResource(R.drawable.ic_video);
 
         // Extracting and putting user details
-        User user = (User) getIntent().getSerializableExtra("user");
+        user = (User) getIntent().getSerializableExtra("user");
         if(user != null){
             tvFirstChar.setText(user.firstName.substring(0, 1));
             tvUsername.setText(user.firstName + " " + user.lastName);
@@ -76,7 +77,10 @@ public class OutgoingInvitationActivity extends AppCompatActivity {
             initiateMeeting(meetingType, user.token);
     }
     @OnClick(R.id.act_meet_invite_outgoing_img_stop)
-    public void stopInvitationClicked(){ onBackPressed(); }
+    public void stopInvitationClicked(){
+        if(user != null)
+            cancelInvitation(user.token);
+    }
 
     private void initiateMeeting(String meetingType, String receiverToken){
         try {
@@ -108,13 +112,19 @@ public class OutgoingInvitationActivity extends AppCompatActivity {
         ).enqueue(new Callback<String>() {
             @Override
             public void onResponse(@NonNull Call<String> call, @NonNull Response<String> response) {
-                if(response.isSuccessful() && type.equals(Constants.REMOTE_MSG_INVITATION))
-                    Toast.makeText(OutgoingInvitationActivity.this, "Invitation sent successfully", Toast.LENGTH_SHORT).show();
+                if(response.isSuccessful())
+                    if(type.equals(Constants.REMOTE_MSG_INVITATION))
+                        Toast.makeText(OutgoingInvitationActivity.this, "Invitation sent successfully", Toast.LENGTH_SHORT).show();
+                    else if(type.equals(Constants.REMOTE_MSG_INVITATION_RESPONSE)) {
+                        Toast.makeText(OutgoingInvitationActivity.this, "Invitation cancelled", Toast.LENGTH_SHORT).show();
+                        finish();
+                    }
                 else{
                     Toast.makeText(OutgoingInvitationActivity.this, response.message(), Toast.LENGTH_SHORT).show();
                     finish();
                 }
             }
+
 
             @Override
             public void onFailure(@NonNull Call<String> call, @NonNull Throwable t) {
@@ -122,5 +132,27 @@ public class OutgoingInvitationActivity extends AppCompatActivity {
                 finish();
             }
         });
+    }
+
+    private void cancelInvitation(String receiverToken){
+        try {
+            JSONArray tokens = new JSONArray();
+            tokens.put(receiverToken);
+
+            JSONObject body = new JSONObject();
+            JSONObject data = new JSONObject();
+
+            data.put(Constants.REMOTE_MSG_TYPE, Constants.REMOTE_MSG_INVITATION_RESPONSE);
+            data.put(Constants.REMOTE_MSG_INVITATION_RESPONSE, Constants.REMOTE_MSG_INVITATION_CANCELLED);
+
+            body.put(Constants.REMOTE_MSG_DATA, data);
+            body.put(Constants.REMOTE_MSG_REGISTRATION_IDS, tokens);
+
+            sendRemoteMessage(body.toString(), Constants.REMOTE_MSG_INVITATION_RESPONSE);
+
+        } catch (JSONException e) {
+            Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+            finish();
+        }
     }
 }

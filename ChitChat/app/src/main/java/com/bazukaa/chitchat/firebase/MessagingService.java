@@ -40,6 +40,10 @@ public class MessagingService extends FirebaseMessagingService {
                     Constants.KEY_EMAIL,
                     remoteMessage.getData().get(Constants.KEY_EMAIL)
             );
+            intent.putExtra(
+                    Constants.REMOTE_MSG_INVITER_TOKEN,
+                    remoteMessage.getData().get(Constants.REMOTE_MSG_INVITER_TOKEN)
+            );
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK );
             startActivity(intent);
         }
