@@ -1,4 +1,4 @@
-package com.bazukaa.chitchat.activities;
+package com.bazukaa.chitchat.ui;
 
 import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;

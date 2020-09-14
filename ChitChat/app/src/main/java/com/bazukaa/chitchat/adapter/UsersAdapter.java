@@ -25,20 +25,12 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UserViewHold
     @NonNull
     @Override
     public UserViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new UserViewHolder(
-                LayoutInflater.from(parent.getContext()).inflate(
-                        R.layout.item_container_user,
-                        parent,
-                        false
-                )
-        );
+        return new UserViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_container_user, parent, false));
     }
-
     @Override
     public void onBindViewHolder(@NonNull UserViewHolder holder, int position) {
         holder.setUserData(users.get(position));
     }
-
     @Override
     public int getItemCount() {
         return users.size();

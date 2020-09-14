@@ -1,4 +1,4 @@
-package com.bazukaa.chitchat.activities;
+package com.bazukaa.chitchat.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -64,13 +64,14 @@ public class MainActivity extends AppCompatActivity {
                 sendFCMTokenToDatabase(task.getResult().getToken());
         });
 
-        // Rv setup
+        // Users Rv setup
         users = new ArrayList<>();
         usersAdapter = new UsersAdapter(users);
         usersRV.setAdapter(usersAdapter);
         getUsers();
 
     }
+    // Get users list from firestore
     private void getUsers(){
         usersProgressBar.setVisibility(View.VISIBLE);
         FirebaseFirestore db = FirebaseFirestore.getInstance();

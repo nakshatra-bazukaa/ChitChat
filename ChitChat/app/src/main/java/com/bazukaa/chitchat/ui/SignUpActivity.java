@@ -1,6 +1,5 @@
-package com.bazukaa.chitchat.activities;
+package com.bazukaa.chitchat.ui;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -16,10 +15,7 @@ import android.widget.Toast;
 import com.bazukaa.chitchat.R;
 import com.bazukaa.chitchat.util.Constants;
 import com.bazukaa.chitchat.util.PreferenceManager;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.button.MaterialButton;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
