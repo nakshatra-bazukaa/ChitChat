@@ -74,7 +74,7 @@
         android:id="@+id/act_meet_invite_incoming_img_accept"
         android:layout_width="@dimen/_40sdp"
         android:layout_height="@dimen/_40sdp"
-        android:layout_marginEnd="@dimen/_60sdp"
+        android:layout_marginStart="@dimen/_60sdp"
         android:layout_marginBottom="@dimen/_50sdp"
         android:background="@drawable/background_accept_invitation"
         android:contentDescription="@string/app_name"
