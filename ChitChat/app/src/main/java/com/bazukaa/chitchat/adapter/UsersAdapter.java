@@ -7,22 +7,30 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bazukaa.chitchat.R;
 import com.bazukaa.chitchat.listeners.UsersListener;
 import com.bazukaa.chitchat.model.User;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UserViewHolder> {
 
     private List<User> users;
     private UsersListener usersListener;
+    private List<User> selectedUsers;
 
     public UsersAdapter(List<User> users, UsersListener usersListener) {
         this.users = users;
         this.usersListener = usersListener;
+        selectedUsers = new ArrayList<>();
+    }
+
+    public List<User> getSelectedUsers() {
+        return selectedUsers;
     }
 
     @NonNull
@@ -43,6 +51,8 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UserViewHold
 
         TextView tvFirstChar, tvUserName, tvEmail;
         ImageView imgAudioMeet, imgVideoMeet;
+        ConstraintLayout userContainer;
+        ImageView imgSelected;
         public UserViewHolder(@NonNull View itemView) {
             super(itemView);
             tvFirstChar = itemView.findViewById(R.id.user_tv_first_char);
@@ -50,6 +60,8 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UserViewHold
             tvEmail = itemView.findViewById(R.id.user_tv_email);
             imgAudioMeet = itemView.findViewById(R.id.user_img_audio_meet);
             imgVideoMeet = itemView.findViewById(R.id.user_img_video_meet);
+            userContainer = itemView.findViewById(R.id.user_container);
+            imgSelected = itemView.findViewById(R.id.user_img_selected);
         }
 
         void setUserData(User user){
@@ -60,6 +72,33 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UserViewHold
             imgAudioMeet.setOnClickListener(v -> { usersListener.initiateAudioMeeting(user); });
             // Initiate video call
             imgVideoMeet.setOnClickListener(v -> usersListener.initiateVideoMeeting(user));
+            userContainer.setOnLongClickListener(v -> {
+                if(imgSelected.getVisibility() != View.VISIBLE){
+                    selectedUsers.add(user);
+                    imgSelected.setVisibility(View.VISIBLE);
+                    imgVideoMeet.setVisibility(View.GONE);
+                    imgAudioMeet.setVisibility(View.GONE);
+                    usersListener.onMultipleUsersAction(true);
+                }
+                return true;
+            });
+            userContainer.setOnClickListener(v -> {
+                if(imgSelected.getVisibility() == View.VISIBLE){
+                    selectedUsers.remove(user);
+                    imgSelected.setVisibility(View.GONE);
+                    imgVideoMeet.setVisibility(View.VISIBLE);
+                    imgAudioMeet.setVisibility(View.VISIBLE);
+                    if(selectedUsers.size() == 0)
+                        usersListener.onMultipleUsersAction(false);
+                }else{
+                    if(selectedUsers.size() > 0){
+                        selectedUsers.add(user);
+                        imgSelected.setVisibility(View.VISIBLE);
+                        imgVideoMeet.setVisibility(View.GONE);
+                        imgAudioMeet.setVisibility(View.GONE);
+                    }
+                }
+            });
         }
     }
 }

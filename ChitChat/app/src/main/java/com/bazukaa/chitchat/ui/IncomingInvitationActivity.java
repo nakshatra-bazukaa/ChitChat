@@ -50,16 +50,20 @@ public class IncomingInvitationActivity extends AppCompatActivity {
     @BindView(R.id.act_meet_invite_incoming_img_reject)
     ImageView imgRejectInvite;
 
+    private String meetingType = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_incoming_invitation);
         ButterKnife.bind(this);
 
-        String meetingType = getIntent().getStringExtra(Constants.REMOTE_MSG_MEETING_TYPE);
-        if(meetingType != null && meetingType.equals("video")){
-            incomingMeetType.setImageResource(R.drawable.ic_video);
-        }
+        meetingType = getIntent().getStringExtra(Constants.REMOTE_MSG_MEETING_TYPE);
+        if(meetingType != null)
+            if(meetingType.equals("video"))
+                incomingMeetType.setImageResource(R.drawable.ic_video);
+            else
+                incomingMeetType.setImageResource(R.drawable.ic_audio);
 
         String firstName = getIntent().getStringExtra(Constants.KEY_FIRST_NAME);
         String lastName = getIntent().getStringExtra(Constants.KEY_LAST_NAME);
@@ -119,13 +123,13 @@ public class IncomingInvitationActivity extends AppCompatActivity {
                     if(type.equals(Constants.REMOTE_MSG_INVITATION_ACCEPTED)){
                         try {
                             URL serverURL = new URL("https://meet.jit.si");
-                            JitsiMeetConferenceOptions conferenceOptions =
-                                    new JitsiMeetConferenceOptions.Builder()
-                                    .setServerURL(serverURL)
-                                    .setWelcomePageEnabled(false)
-                                    .setRoom(getIntent().getStringExtra(Constants.REMOTE_MSG_MEETING_ROOM))
-                                    .build();
-                            JitsiMeetActivity.launch(IncomingInvitationActivity.this, conferenceOptions);
+                            JitsiMeetConferenceOptions.Builder builder = new JitsiMeetConferenceOptions.Builder();
+                            builder.setServerURL(serverURL);
+                            builder.setWelcomePageEnabled(false);
+                            builder.setRoom(getIntent().getStringExtra(Constants.REMOTE_MSG_MEETING_ROOM));
+                            if(meetingType.equals("audio"))
+                                builder.setVideoMuted(true);
+                            JitsiMeetActivity.launch(IncomingInvitationActivity.this, builder.build());
                             finish();
                         } catch (MalformedURLException e) {
                             Toast.makeText(IncomingInvitationActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
