@@ -9,9 +9,11 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.bazukaa.chitchat.R;
 import com.bazukaa.chitchat.adapter.UsersAdapter;
+import com.bazukaa.chitchat.listeners.UsersListener;
 import com.bazukaa.chitchat.model.User;
 import com.bazukaa.chitchat.util.Constants;
 import com.bazukaa.chitchat.util.PreferenceManager;
@@ -29,7 +31,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements UsersListener {
 
     @BindView(R.id.act_main_tv_title)
     TextView tvTitle;
@@ -37,8 +39,8 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView usersRV;
     @BindView(R.id.act_main_tv_error_message)
     TextView tvErrorMessage;
-    @BindView(R.id.act_main_progress_bar_users)
-    ProgressBar usersProgressBar;
+    @BindView(R.id.act_main_swipe_refresh)
+    SwipeRefreshLayout refreshUsers;
 
     private PreferenceManager preferenceManager;
     private List<User> users;
@@ -66,21 +68,25 @@ public class MainActivity extends AppCompatActivity {
 
         // Users Rv setup
         users = new ArrayList<>();
-        usersAdapter = new UsersAdapter(users);
+        usersAdapter = new UsersAdapter(users, this);
         usersRV.setAdapter(usersAdapter);
+
+        refreshUsers.setOnRefreshListener(this::getUsers);
+
         getUsers();
 
     }
     // Get users list from firestore
     private void getUsers(){
-        usersProgressBar.setVisibility(View.VISIBLE);
+        refreshUsers.setRefreshing(true);
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection(Constants.KEY_COLLECTION_USERS)
                 .get()
                 .addOnCompleteListener(task -> {
-                    usersProgressBar.setVisibility(View.GONE);
+                    refreshUsers.setRefreshing(false);
                     String myUserId = preferenceManager.getString(Constants.KEY_USER_ID);
                     if(task.isSuccessful() && task.getResult() != null){
+                        users.clear();
                         for(QueryDocumentSnapshot documentSnapshot : task.getResult()){
                             if(myUserId.equals(documentSnapshot.getId())){
                                 continue;
@@ -136,5 +142,21 @@ public class MainActivity extends AppCompatActivity {
                     finish();
                 })
                 .addOnFailureListener(e -> Toast.makeText(MainActivity.this, "Unable to sign out", Toast.LENGTH_SHORT).show());
+    }
+
+    @Override
+    public void initiateVideoMeeting(User user) {
+        if(user.token == null || user.token.trim().isEmpty())
+            Toast.makeText(this, user.firstName + " " + user.lastName + " is not available for meeting", Toast.LENGTH_SHORT).show();
+        else
+            Toast.makeText(this, "Video meeting with " + user.firstName + " " + user.lastName, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void initiateAudioMeeting(User user) {
+        if(user.token == null || user.token.trim().isEmpty())
+            Toast.makeText(this, user.firstName + " " + user.lastName + " is not available for meeting", Toast.LENGTH_SHORT).show();
+        else
+            Toast.makeText(this, "Audio meeting with " + user.firstName + " " + user.lastName, Toast.LENGTH_SHORT).show();
     }
 }

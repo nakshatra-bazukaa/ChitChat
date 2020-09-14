@@ -1,4 +1,9 @@
 package com.bazukaa.chitchat.listeners;
 
-public class UsersListener {
+import com.bazukaa.chitchat.model.User;
+
+public interface UsersListener {
+
+    void initiateVideoMeeting(User user);
+    void initiateAudioMeeting(User user);
 }
