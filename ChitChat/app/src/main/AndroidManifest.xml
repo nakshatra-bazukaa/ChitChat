@@ -12,7 +12,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".ui.IncomingInvitationActivity"></activity>
+        <activity android:name=".ui.OutgoingInvitationActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".ui.IncomingInvitationActivity"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".ui.SignInActivity"
             android:screenOrientation="portrait"
