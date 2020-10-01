@@ -1,4 +1,4 @@
-<img src="" alt = ""CitChat align="right" height="150" width="150" />
+<img src="" align="right" height="150" width="150" />
 
 # ChitChat - A Video Conferencing App [![Generic badge](https://img.shields.io/badge/ChitChat-Download-<COLOR>.svg)]() 
 #### Requires Android 8 or greater to run!
